@@ -49,10 +49,28 @@ class App(Tk):
         self.loginFrame = Frame(self, width=1920, height=1080)
         self.loginTitle= Label(self.loginFrame, anchor="center", text="Login", bg="green", fg="white", font=self.titleFont)
         self.loginTitle.grid(row=0, column=0, sticky="NSEW")
+        self.loginFrame.columnconfigure(0,weight=1)
+        self.loginFrame.rowconfigure(0,minsize=100)
+
+        self.loginFrame.rowconfigure(1,minsize=1)
+
+        #back button
+        backButton = Button(self.loginFrame, text="Back", height="2", width="10", activebackground="gray", activeforeground="white", command=self.BackSwitch)
+        backButton.grid(row=2, column=0)
+        changeOnHover(backButton, "A6A6A6", "white")
+
 
         self.registerFrame = Frame(self, width=1920, height=1080)
         self.registerTitle = Label(self.registerFrame, anchor="center", text="Register", bg="green", fg="white", font=self.titleFont)
         self.registerTitle.grid(row=0, column=0, sticky="NSEW")
+        self.registerFrame.columnconfigure(0,weight=1)
+        self.registerFrame.rowconfigure(0,minsize=100)
+
+        self.registerFrame.rowconfigure(1,minsize=1)
+
+        backButton = Button(self.registerFrame, text="Back", height="2", width="10", activebackground="gray", activeforeground="white", command=self.BackSwitch)
+        backButton.grid(row=2, column=0)
+        changeOnHover(backButton, "A6A6A6", "white")
 
         self.mainloop()
 
@@ -64,5 +82,10 @@ class App(Tk):
     def RegisterSwitch(self):
         self.firstFrame.grid_forget()
         self.registerFrame.grid(row=0, column=0, rowspan=3, sticky="NSEW")
+
+    def BackSwitch(self):
+        self.loginFrame.grid_forget()
+        self.registerFrame.grid_forget()
+        self.firstFrame.grid(row=0, column=0, rowspan=3, sticky="NSEW")
 
 App()

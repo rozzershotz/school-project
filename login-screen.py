@@ -9,7 +9,7 @@ class App(Tk):
         self.geometry("1920x1080")
         self.columnconfigure(0,weight=1)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
-        self.buttonFont = TkFont.Font(family="Arial", size=15)
+        self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
 
 
         # first screen

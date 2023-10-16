@@ -11,6 +11,7 @@ class App(Tk):
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15)
 
+
         # first screen
         self.firstFrame = Frame(self, width=1920, height=1080)
         self.title = Label(self.firstFrame, anchor="center", text="Battleships", bg="blue", fg="white", font=self.titleFont)
@@ -21,19 +22,28 @@ class App(Tk):
         spacing = Label(self.firstFrame, text="", height="12", width="50")
         spacing.grid(row=1, column=0)
 
+        # added interactive hover on buttons
+        def changeOnHover(Button, colorOnHover, colorOnLeave):
+            Button.bind("<Enter>", func=lambda e: Button.config(background=colorOnHover))
+    
+            Button.bind("<Leave>", func=lambda e: Button.config(background=colorOnLeave))
+
         # creating buttons
-        loginButton = Button(self.firstFrame, text="Login", height="5", width="50", activebackground="white", activeforeground="gray", command = self.loginSwitch)
+        loginButton = Button(self.firstFrame, text="Login", height="5", width="50", activebackground="blue", activeforeground="white", command = self.loginSwitch)
         loginButton.grid(row=2,column=0)
+        changeOnHover(loginButton, "#A6A6A6", "white")
 
         self.firstFrame.rowconfigure(3,minsize=1)
 
-        registerButton = Button(self.firstFrame, text="Register", height="5", width="50", activebackground="white", activeforeground="gray", command=self.RegisterSwitch)
+        registerButton = Button(self.firstFrame, text="Register", height="5", width="50", activebackground="blue", activeforeground="white", command=self.RegisterSwitch)
         registerButton.grid(row=4,column=0)
+        changeOnHover(registerButton, "#A6A6A6", "white")
 
         self.firstFrame.rowconfigure(5,minsize=1)
 
-        guestButton = Button(self.firstFrame, text="Guest", height="5", width="50", activebackground="white", activeforeground="gray")
+        guestButton = Button(self.firstFrame, text="Guest", height="5", width="50", activebackground="blue", activeforeground="white")
         guestButton.grid(row=6,column=0)
+        changeOnHover(guestButton, "#A6A6A6", "white")
 
         # creating other screens
         self.loginFrame = Frame(self, width=1920, height=1080)

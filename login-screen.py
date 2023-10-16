@@ -54,7 +54,7 @@ class App(Tk):
 
         self.loginFrame.rowconfigure(1,minsize=1)
 
-        #back button
+        # back button
         backButton = Button(self.loginFrame, text="Back", height="2", width="10", activebackground="gray", activeforeground="white", command=self.BackSwitch)
         backButton.grid(row=2, column=0)
         changeOnHover(backButton, "A6A6A6", "white")

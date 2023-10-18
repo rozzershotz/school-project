@@ -31,19 +31,19 @@ class App(Tk):
         # creating buttons
         loginButton = Button(self.firstFrame, text="Login", height="5", width="50", activebackground="blue", activeforeground="white", command = self.loginSwitch)
         loginButton.grid(row=2,column=0)
-        changeOnHover(loginButton, "#A6A6A6", "white")
+        changeOnHover(loginButton, "#ADD8E6", "white")
 
         self.firstFrame.rowconfigure(3,minsize=1)
 
         registerButton = Button(self.firstFrame, text="Register", height="5", width="50", activebackground="blue", activeforeground="white", command=self.RegisterSwitch)
         registerButton.grid(row=4,column=0)
-        changeOnHover(registerButton, "#A6A6A6", "white")
+        changeOnHover(registerButton, "#ADD8E6", "white")
 
         self.firstFrame.rowconfigure(5,minsize=1)
 
-        guestButton = Button(self.firstFrame, text="Guest", height="5", width="50", activebackground="blue", activeforeground="white")
+        guestButton = Button(self.firstFrame, text="Guest", height="5", width="50", activebackground="gray", activeforeground="white")
         guestButton.grid(row=6,column=0)
-        changeOnHover(guestButton, "#A6A6A6", "white")
+        changeOnHover(guestButton, "#ADD8E6", "white")
 
         # creating other screens
         self.loginFrame = Frame(self, width=1920, height=1080)
@@ -57,7 +57,7 @@ class App(Tk):
         # back button
         backButton = Button(self.loginFrame, text="Back", height="2", width="10", activebackground="gray", activeforeground="white", command=self.BackSwitch)
         backButton.grid(row=2, column=0)
-        changeOnHover(backButton, "A6A6A6", "white")
+        changeOnHover(backButton, "ADD8E6", "white")
 
 
         self.registerFrame = Frame(self, width=1920, height=1080)
@@ -70,7 +70,7 @@ class App(Tk):
 
         backButton = Button(self.registerFrame, text="Back", height="2", width="10", activebackground="gray", activeforeground="white", command=self.BackSwitch)
         backButton.grid(row=2, column=0)
-        changeOnHover(backButton, "A6A6A6", "white")
+        changeOnHover(backButton, "ADD8E6", "white")
 
         self.mainloop()
 

@@ -29,19 +29,19 @@ class App(Tk):
             Button.bind("<Leave>", func=lambda e: Button.config(background=colorOnLeave))
 
         # creating buttons
-        loginButton = Button(self.firstFrame, text="Login", height="5", width="50", activebackground="#055c9d", activeforeground="white", command = self.loginSwitch)
+        loginButton = Button(self.firstFrame, text="Login", height="5", width="50", activebackground="#055c9d", bg="white", command = self.loginSwitch)
         loginButton.grid(row=2,column=0)
         changeOnHover(loginButton, "#0074b7", "white")
 
         self.firstFrame.rowconfigure(3,minsize=1)
 
-        registerButton = Button(self.firstFrame, text="Register", height="5", width="50", activebackground="#055c9d", activeforeground="white", command=self.RegisterSwitch)
+        registerButton = Button(self.firstFrame, text="Register", height="5", width="50", activebackground="#055c9d", bg="white", command=self.RegisterSwitch)
         registerButton.grid(row=4,column=0)
         changeOnHover(registerButton, "#0074b7", "white")
 
         self.firstFrame.rowconfigure(5,minsize=1)
 
-        guestButton = Button(self.firstFrame, text="Guest", height="5", width="50", activebackground="#055c9d", activeforeground="white")
+        guestButton = Button(self.firstFrame, text="Guest", height="5", width="50", activebackground="#055c9d", bg="white")
         guestButton.grid(row=6,column=0)
         changeOnHover(guestButton, "#0074b7", "white")
 

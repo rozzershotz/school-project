@@ -2,6 +2,14 @@ from tkinter import *
 import tkinter.font as TkFont
 mainfont = ("/home/pi/Documents/q13rtaylor-project/school-project/fonts/american_captain/American Captain.ttf")
 
+def makeDatabase(db):
+    c = db.cursor()
+    c.execute("DROP TABLE IF EXISTS username")
+    c.execute("DROP TABLE IF EXISTS password")
+    c.execute("CREATE TABLE password")
+    c.execute("CREATE TABLE username (userID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)")
+    db.commit()
+
 # initiated Class, created parameters for screens
 class App(Tk):
     def __init__(self):

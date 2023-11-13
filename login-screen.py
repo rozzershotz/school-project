@@ -23,12 +23,14 @@ class App(Tk):
         # first screen
         self.firstFrame = Frame(self, width=1920, height=1080)
         self.title = Label(self.firstFrame, anchor="center", text="Battleships", bg="#0074b7", fg="white", font=self.titleFont)
-        self.title.grid(row=0, column=0, sticky="NSEW")
+        self.title.grid(row=0, column=0, sticky="NSEW", columnspan=2)
         self.firstFrame.columnconfigure(0,weight=1)
         self.firstFrame.rowconfigure(0,minsize=100)
         self.firstFrame.grid(row=0, column=0, sticky="NSEW")
         spacing = Label(self.firstFrame, text="", height="12", width="50")
         spacing.grid(row=1, column=0)
+
+        self.addExitButton(self.firstFrame)
 
         # creating buttons
         loginButton = Button(self.firstFrame, text="Login", height="5", width="50", activebackground="#055c9d", activeforeground="white", command = self.loginSwitch)
@@ -51,23 +53,24 @@ class App(Tk):
         # creating other screens
         self.loginFrame = Frame(self, width=1920, height=1080)
         self.loginTitle= Label(self.loginFrame, anchor="center", text="Login", bg="#116530", fg="white", font=self.titleFont)
-        self.loginTitle.grid(row=0, column=0, sticky="NSEW")
+        self.loginTitle.grid(row=0, column=0, sticky="NSEW", columnspan=2)
         self.loginFrame.columnconfigure(0,weight=1)
         self.loginFrame.rowconfigure(0,minsize=100)
 
         self.loginFrame.rowconfigure(1,minsize=1)
 
-        # back button
+        self.addExitButton(self.loginFrame)
         self.addBackButton(self.loginFrame)
 
         self.registerFrame = Frame(self, width=1920, height=1080)
         self.registerTitle = Label(self.registerFrame, anchor="center", text="Register", bg="#116530", fg="white", font=self.titleFont)
-        self.registerTitle.grid(row=0, column=0, sticky="NSEW")
+        self.registerTitle.grid(row=0, column=0, sticky="NSEW", columnspan=2)
         self.registerFrame.columnconfigure(0,weight=1)
         self.registerFrame.rowconfigure(0,minsize=100)
 
         self.registerFrame.rowconfigure(1,minsize=1)
 
+        self.addExitButton(self.registerFrame)
         self.addBackButton(self.registerFrame)
 
         self.mainloop()
@@ -79,8 +82,13 @@ class App(Tk):
 
     def addBackButton(self, frameRef):
         backButton = Button(frameRef, text="Back", height="2", width="10", activebackground="gray", activeforeground="white", command=self.BackSwitch)
-        backButton.grid(row=2, column=0)
+        backButton.grid(row=2, column=0, columnspan=2)
         self.changeOnHover(backButton, "ADD8E6", "white")
+
+    def addExitButton(self, frameRef):
+        exitButton = Button(frameRef, text="Quit", height="2", width="10", activebackground="gray", activeforeground="white", command=self.destroy)
+        exitButton.grid(row=0, column=1)
+        self.changeOnHover(exitButton, "ADD8E6", "white")
 
     # creating way to switch between screens
     def loginSwitch(self):

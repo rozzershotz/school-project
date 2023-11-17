@@ -1,5 +1,5 @@
 # school-project
 
-A level coding project <br>
-Battleships game with AI capabaility
-Client - Henry Smith, Alexander Hewitt
+<b>A level coding project<b> <br>
+Battleships game with AI capabaility <br>
+Clients - Henry Smith, Alexander Hewitt

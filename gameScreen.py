@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.font as TkFont
 
 class Game(Frame):
-    def __init__(self, parent, gridSize):
+    def __init__(self, parent):
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
@@ -15,5 +15,5 @@ class Game(Frame):
         spacing = Label(self, text="", height="12", width="50")
         spacing.grid(row=1, column=0, columnspan=2)
 
-        self.playerGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]
-        self.opponentGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]
+        #self.playerGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]
+        #self.opponentGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]

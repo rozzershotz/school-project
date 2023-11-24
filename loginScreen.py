@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter.font as TkFont
 from gameScreen import Game
+import sqlite3 as sql
 mainfont = ("/home/pi/Documents/q13rtaylor-project/school-project/fonts/american_captain/American Captain.ttf")
 
 def makeDatabase(db):
@@ -101,7 +102,19 @@ class App(Tk):
         self.addExitButton(self.mainMenuFrame)
         self.addBackButton(self.mainMenuFrame)
 
+        self.db = sql.connect("userdatabase.db")
+        makeDatabase(self.db)
+
+        self.testDB()
+
         self.mainloop()
+
+    def testDB(self):
+        # this just accesses the database and print out what it finds in the pupils table
+        c = self.db.cursor()
+        results = c.execute("SELECT * FROM username")
+        for line in results.fetchall():
+            print(line)
 
     # added interactive hover on buttons
     def changeOnHover(self, Button, colorOnHover, colorOnLeave):

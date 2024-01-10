@@ -14,7 +14,7 @@ class Game(Frame):
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
-        self.userCanvas.bind("<Button-1>", self.grab)
+        self.userCanvas.bind("<Button-1>", self.grabbed)
         self.userCanvas.bind("<ButtonRelease-1>",self.dropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)
 
@@ -38,6 +38,9 @@ class Game(Frame):
 
     def clicked(self,e):
         print("clicked at", e.x, e.y)
+        pass
+
+    def grabbed(self,e):
         pass
 
 

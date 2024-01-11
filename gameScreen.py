@@ -24,12 +24,12 @@ class Game(Frame):
         self.rowconfigure(0,minsize=100)
 
     def drawOpponentGrid(self):
-        for i in range(0,401,50):
+        for i in range(1,402,50):
             self.opponentCanvas.create_line(i+1,0,i+1,400,fill="gray")
             self.opponentCanvas.create_line(0,i+1,400,i+1,fill="gray")
 
     def drawUserGrid(self):
-        for i in range(0,401,50):
+        for i in range(1,402,50):
             self.userCanvas.create_line(i+1,0,i+1,400,fill="gray")
             self.userCanvas.create_line(0,i+1,400,i+1,fill="gray")
 
@@ -38,11 +38,16 @@ class Game(Frame):
 
     def clicked(self,e):
         print("clicked at", e.x, e.y)
+        x_result = e.x // 50
+        y_result = e.y // 50
+        
+
+        print(f"row index (from 0): {x_result}")
+        print(f"column index (from 0): {y_result}")
         pass
 
     def grabbed(self,e):
         pass
-
 
         #self.playerGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]
         #self.opponentGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]

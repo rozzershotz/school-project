@@ -3,6 +3,9 @@ import tkinter.font as TkFont
 
 class Game(Frame):
     def __init__(self, parent):
+
+        self.battleship = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
+
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
@@ -10,6 +13,7 @@ class Game(Frame):
         self.opponentCanvas.grid(row=2, column=0)
         self.userCanvas = Canvas(self, width=401, height=401)
         self.userCanvas.grid(row=4, column=0)
+        self.battleshipSprite = self.userCanvas.create_image(20,20, anchor=NE, image = self.battleship)
         self.drawOpponentGrid()
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)

@@ -5,15 +5,17 @@ class Game(Frame):
     def __init__(self, parent):
 
         self.battleship = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
+        self.carrier = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
         self.opponentCanvas = Canvas(self, width=401, height=401)
         self.opponentCanvas.grid(row=2, column=0)
-        self.userCanvas = Canvas(self, width=401, height=401)
+        self.userCanvas = Canvas(self, width=902, height=401)
         self.userCanvas.grid(row=4, column=0)
-        self.battleshipSprite = self.userCanvas.create_image(20,20, anchor=NE, image = self.battleship)
+        self.battleshipSprite = self.userCanvas.create_image(700,100, image = self.battleship)
+        self.carrierSprite = self.userCanvas.create_image(800, 100, image = self.carrier)
         self.drawOpponentGrid()
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
@@ -34,8 +36,8 @@ class Game(Frame):
 
     def drawUserGrid(self):
         for i in range(1,402,50):
-            self.userCanvas.create_line(i+1,0,i+1,400,fill="gray")
-            self.userCanvas.create_line(0,i+1,400,i+1,fill="gray")
+            self.userCanvas.create_line(i+1+250,0,i+1+250,400,fill="gray")
+            self.userCanvas.create_line(250,i+1,650,i+1,fill="gray")
 
     def dropped(self,e):
         pass

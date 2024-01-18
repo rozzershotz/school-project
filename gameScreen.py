@@ -3,9 +3,9 @@ import tkinter.font as TkFont
 
 class Game(Frame):
     def __init__(self, parent):
-
-        self.battleship = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
-        self.carrier = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
+        
+        self.battleshipImage = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
+        self.carrierImage = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
@@ -14,15 +14,18 @@ class Game(Frame):
         self.opponentCanvas.grid(row=2, column=0)
         self.userCanvas = Canvas(self, width=902, height=401)
         self.userCanvas.grid(row=4, column=0)
-        self.battleshipSprite = self.userCanvas.create_image(700,100, image = self.battleship)
-        self.carrierSprite = self.userCanvas.create_image(800, 100, image = self.carrier)
+        self.battleshipSprite = self.userCanvas.create_image(700,100, image = self.battleshipImage)
+        self.carrierSprite = self.userCanvas.create_image(800, 100, image = self.carrierImage)
         self.drawOpponentGrid()
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
-        self.userCanvas.bind("<Button-1>", self.grabbed)
         self.userCanvas.bind("<ButtonRelease-1>",self.dropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)
+        self.userCanvas.bind("<B1-Motion>", self.battleshipMoved)
+        self.userCanvas.bind("<Button-1>", self.onBattleshipClick)
+        self.userCanvas.bind("<B1-Motion>", self.carrierMoved)
+        self.userCanvas.bind("<Button-1>", self.onCarrierClick)
 
         self.title = Label(self, anchor="center", text="hello new game", bg="#0074b7", fg="white", font = self.titleFont)
         self.title.grid(row=0, column=0, sticky="NSEW", columnspan=2)
@@ -52,8 +55,41 @@ class Game(Frame):
         print(f"column index (from 0): {y_result}")
         pass
 
-    def grabbed(self,e):
-        pass
+    def onBattleshipClick(self,e):
+        # sets a boundary around the image to determine if clicked
+        battleshipBbox = self.userCanvas.bbox(self.battleshipSprite)
+        click_x, click_y = e.x, e.y
 
-        #self.playerGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]
-        #self.opponentGrid = [[None for x in range(gridSize)]  for row in range(gridSize)]
+        # checks if a click happens within that boundary box
+        if battleshipBbox[0] < click_x < battleshipBbox[2] and battleshipBbox[1] < click_y < battleshipBbox[3]:
+            print(f"Mouse clicked on the battleship!")
+            self.battleshipClicked = True
+        else:
+            self.battleshipClicked = False
+
+    def onCarrierClick(self,e):
+        # sets a boundary around the image to determine if clicked
+        carrierBbox = self.userCanvas.bbox(self.carrierSprite)
+        click_x2, click_y2 = e.x, e.y
+
+        # checks if a click happens within that boundary box
+        if carrierBbox[0] < click_x2 < carrierBbox[2] and carrierBbox[1] < click_y2 < carrierBbox[3]:
+            print(f"Mouse clicked on the carrier!")
+            self.carrierClicked = True
+        else:
+            self.carrierClicked = False
+
+
+    def battleshipMoved(self,e):
+        print(f"x coord: {e.x}")
+        print(f"y coord: {e.y}")
+
+        if self.battleshipClicked:
+            self.userCanvas.coords(self.battleshipSprite, e.x, e.y)
+
+    def carrierMoved(self,e):
+        print(f"x coord: {e.x}")
+        print(f"y coord: {e.y}")
+
+        if self.carrierClicked:
+            self.userCanvas.coords(self.carrierSprite, e.x, e.y)

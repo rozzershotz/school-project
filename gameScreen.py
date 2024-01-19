@@ -7,6 +7,8 @@ class Game(Frame):
         self.battleshipImage = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
         self.carrierImage = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
+        self.gameGrid = [[None for row in range(8)]for column in range(8)]
+
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
@@ -48,7 +50,6 @@ class Game(Frame):
         x_result = e.x // 50
         y_result = e.y // 50
         
-
         print(f"row index (from 0): {x_result}")
         print(f"column index (from 0): {y_result}")
         pass
@@ -57,6 +58,7 @@ class Game(Frame):
         # sets a boundary around the image to determine if clicked
         battleshipBbox = self.userCanvas.bbox(self.battleshipSprite)
         click_x, click_y = e.x, e.y
+        
 
         # checks if a click happens within that boundary box
         if battleshipBbox[0] < click_x < battleshipBbox[2] and battleshipBbox[1] < click_y < battleshipBbox[3]:

@@ -22,10 +22,8 @@ class Game(Frame):
         self.drawUserGrid()
         self.userCanvas.bind("<ButtonRelease-1>",self.dropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)
-        self.userCanvas.bind("<B1-Motion>", self.battleshipMoved)
-        self.userCanvas.bind("<Button-1>", self.onBattleshipClick)
-        self.userCanvas.bind("<B1-Motion>", self.carrierMoved)
-        self.userCanvas.bind("<Button-1>", self.onCarrierClick)
+        self.userCanvas.bind("<B1-Motion>", self.shipMoved)
+        self.userCanvas.bind("<Button-1>", self.onShipClick)
 
         self.title = Label(self, anchor="center", text="hello new game", bg="#0074b7", fg="white", font = self.titleFont)
         self.title.grid(row=0, column=0, sticky="NSEW", columnspan=2)
@@ -55,7 +53,7 @@ class Game(Frame):
         print(f"column index (from 0): {y_result}")
         pass
 
-    def onBattleshipClick(self,e):
+    def onShipClick(self,e):
         # sets a boundary around the image to determine if clicked
         battleshipBbox = self.userCanvas.bbox(self.battleshipSprite)
         click_x, click_y = e.x, e.y
@@ -67,11 +65,8 @@ class Game(Frame):
         else:
             self.battleshipClicked = False
 
-    def onCarrierClick(self,e):
-        # sets a boundary around the image to determine if clicked
         carrierBbox = self.userCanvas.bbox(self.carrierSprite)
         click_x2, click_y2 = e.x, e.y
-
         # checks if a click happens within that boundary box
         if carrierBbox[0] < click_x2 < carrierBbox[2] and carrierBbox[1] < click_y2 < carrierBbox[3]:
             print(f"Mouse clicked on the carrier!")
@@ -80,16 +75,13 @@ class Game(Frame):
             self.carrierClicked = False
 
 
-    def battleshipMoved(self,e):
+
+    def shipMoved(self,e):
         print(f"x coord: {e.x}")
         print(f"y coord: {e.y}")
 
         if self.battleshipClicked:
             self.userCanvas.coords(self.battleshipSprite, e.x, e.y)
-
-    def carrierMoved(self,e):
-        print(f"x coord: {e.x}")
-        print(f"y coord: {e.y}")
 
         if self.carrierClicked:
             self.userCanvas.coords(self.carrierSprite, e.x, e.y)

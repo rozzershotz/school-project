@@ -7,7 +7,7 @@ class Game(Frame):
         self.battleshipImage = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
         self.carrierImage = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
-        self.gameGrid = [[None for row in range(8)]for column in range(8)]
+        self.gameGrid = [[None for row in range(8)] for column in range(8)]
 
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
@@ -16,13 +16,13 @@ class Game(Frame):
         self.opponentCanvas.grid(row=2, column=0)
         self.userCanvas = Canvas(self, width=902, height=401)
         self.userCanvas.grid(row=4, column=0)
-        self.battleshipSprite = self.userCanvas.create_image(700,100, image = self.battleshipImage)
+        self.battleshipSprite = self.userCanvas.create_image(700,100, image = self.battleshipImage, anchor="nw")
         self.carrierSprite = self.userCanvas.create_image(800, 100, image = self.carrierImage)
         self.drawOpponentGrid()
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
-        self.userCanvas.bind("<ButtonRelease-1>",self.dropped)
+        self.userCanvas.bind("<ButtonRelease-1>",self.battleshipDropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)
         self.userCanvas.bind("<B1-Motion>", self.shipMoved)
         self.userCanvas.bind("<Button-1>", self.onShipClick)
@@ -42,10 +42,42 @@ class Game(Frame):
             self.userCanvas.create_line(i+1+250,0,i+1+250,400,fill="gray")
             self.userCanvas.create_line(250,i+1,650,i+1,fill="gray")
 
-    def dropped(self,e):
-        pass
+    def battleshipDropped(self,e):
+        if self.battleshipClicked:
+            coords = self.userCanvas.coords(self.battleshipSprite)
+        row = int((coords[1] - 250) // 50)
+        col = int((coords[0] - 250) // 50)
 
-    def clicked(self,e):
+        snappedCol = 250 + col * 50
+        snappedRow = 250 + row * 50
+
+        # seeing if cell is already occupied
+        if self.gameGrid[row][col] is not None and self.battleshipClicked:
+            self.userCanvas.coords(self.battleshipSprite, 700, 100)
+            return
+        
+        if self.gameGrid[row][col] is not None and self.carrierClicked:
+            self.userCanvas.coords(self.carrierSprite, 800, 100)
+            return
+        
+        print("dropped at: ", row, col)
+        if self.battleshipClicked:
+            print(self.userCanvas.coords(self.battleshipSprite))
+
+            self.userCanvas.coords(self.battleshipSprite, snappedCol, snappedRow)
+            self.gameGrid[row][col] = (self.battleshipSprite, 1)
+            self.gameGrid[row][col+1] = (self.battleshipSprite, 2)
+            self.gameGrid[row][col+2] = (self.battleshipSprite, 3)
+            self.gameGrid[row][col+3] = (self.battleshipSprite, 4)
+
+        if self.carrierClicked:
+            self.userCanvas.coords(self.carrierSprite, snappedCol, snappedRow)
+            self.gameGrid[row][col] = (self.carrierSprite, 1)
+            self.gameGrid[row][col+1] = (self.carrierSprite, 2)
+            self.gameGrid[row][col+2] = (self.carrierSprite, 3)
+            self.gameGrid[row][col+3] = (self.carrierSprite, 4)
+
+    def clicked(self, e):
         print("clicked at", e.x, e.y)
         x_result = e.x // 50
         y_result = e.y // 50
@@ -64,6 +96,10 @@ class Game(Frame):
         if battleshipBbox[0] < click_x < battleshipBbox[2] and battleshipBbox[1] < click_y < battleshipBbox[3]:
             print(f"Mouse clicked on the battleship!")
             self.battleshipClicked = True
+            for col in range(8):
+                for row in range(8):
+                    if self.gameGrid[col][row] is not None and self.gameGrid[col][row][0]== self.battleshipSprite:
+                        self.gameGrid[col][row] = None
         else:
             self.battleshipClicked = False
 
@@ -75,7 +111,6 @@ class Game(Frame):
             self.carrierClicked = True
         else:
             self.carrierClicked = False
-
 
 
     def shipMoved(self,e):

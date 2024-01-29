@@ -44,9 +44,9 @@ class Game(Frame):
 
     def battleshipDropped(self,e):
         if self.battleshipClicked:
-            coords = self.userCanvas.coords(self.battleshipSprite)
-        row = int((coords[1] - 250) // 50)
-        col = int((coords[0] - 250) // 50)
+            self.coords = self.userCanvas.coords(self.battleshipSprite)
+        row = int((self.coords[1] - 250) // 50)
+        col = int((self.coords[0] - 250) // 50)
 
         snappedCol = 250 + col * 50
         snappedRow = 250 + row * 50
@@ -98,7 +98,7 @@ class Game(Frame):
             self.battleshipClicked = True
             for col in range(8):
                 for row in range(8):
-                    if self.gameGrid[col][row] is not None and self.gameGrid[col][row][0]== self.battleshipSprite:
+                    if self.gameGrid[col][row] is not None and self.gameGrid[col][row][0] == self.battleshipSprite:
                         self.gameGrid[col][row] = None
         else:
             self.battleshipClicked = False
@@ -109,6 +109,10 @@ class Game(Frame):
         if carrierBbox[0] < click_x2 < carrierBbox[2] and carrierBbox[1] < click_y2 < carrierBbox[3]:
             print(f"Mouse clicked on the carrier!")
             self.carrierClicked = True
+            for col in range(8):
+                for row in range(8):
+                    if self.gameGrid[col][row] is not None and self.gameGrid[col][row][0] == self.carrierSprite:
+                        self.gameGrid[col][row] = None
         else:
             self.carrierClicked = False
 

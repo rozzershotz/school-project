@@ -17,7 +17,7 @@ class Game(Frame):
         self.userCanvas = Canvas(self, width=902, height=401)
         self.userCanvas.grid(row=4, column=0)
         self.battleshipSprite = self.userCanvas.create_image(700,100, image = self.battleshipImage, anchor="nw")
-        self.carrierSprite = self.userCanvas.create_image(800, 100, image = self.carrierImage)
+        self.carrierSprite = self.userCanvas.create_image(800, 100, image = self.carrierImage, anchor="nw")
         self.drawOpponentGrid()
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
@@ -44,9 +44,9 @@ class Game(Frame):
 
     def battleshipDropped(self,e):
         if self.battleshipClicked:
-            self.coords = self.userCanvas.coords(self.battleshipSprite)
-        row = int((self.coords[1] - 250) // 50)
-        col = int((self.coords[0] - 250) // 50)
+            self.battleshipCoords = self.userCanvas.coords(self.battleshipSprite)
+        row = int((self.battleshipCoords[1] - 250) // 50)
+        col = int((self.battleshipCoords[0] - 250) // 50)
 
         snappedCol = 250 + col * 50
         snappedRow = 250 + row * 50
@@ -54,13 +54,11 @@ class Game(Frame):
         # seeing if cell is already occupied
         if self.gameGrid[row][col] is not None and self.battleshipClicked:
             self.userCanvas.coords(self.battleshipSprite, 700, 100)
+        if col < 0 or col > 400:
+            self.userCanvas.coords(self.battleshipSprite, 700, 100)
             return
         
-        if self.gameGrid[row][col] is not None and self.carrierClicked:
-            self.userCanvas.coords(self.carrierSprite, 800, 100)
-            return
-        
-        print("dropped at: ", row, col)
+        print("battleship dropped at: ", row, col)
         if self.battleshipClicked:
             print(self.userCanvas.coords(self.battleshipSprite))
 
@@ -70,12 +68,26 @@ class Game(Frame):
             self.gameGrid[row][col+2] = (self.battleshipSprite, 3)
             self.gameGrid[row][col+3] = (self.battleshipSprite, 4)
 
+    def carrierDropped(self, e):
         if self.carrierClicked:
-            self.userCanvas.coords(self.carrierSprite, snappedCol, snappedRow)
-            self.gameGrid[row][col] = (self.carrierSprite, 1)
-            self.gameGrid[row][col+1] = (self.carrierSprite, 2)
-            self.gameGrid[row][col+2] = (self.carrierSprite, 3)
-            self.gameGrid[row][col+3] = (self.carrierSprite, 4)
+            self.carrierCoords = self.userCanvas.coords(self.carrierSprite)
+        row2 = int((self.carrierCoords[1] - 250) // 50)
+        col2 = int((self.carrierCoords[0] - 250) // 50)
+
+        snappedCol2 = 250 + col2 * 50
+        snappedRow2 = 250 + row2 * 50
+
+        if self.gameGrid[row2][col2] is not None and self.carrierClicked:
+            self.userCanvas.coords(self.carrierSprite, 800, 100)
+            return
+
+        print("dropped at: ", row2, col2)
+        if self.carrierClicked:
+            self.userCanvas.coords(self.carrierSprite, snappedCol2, snappedRow2)
+            self.gameGrid[row2][col2] = (self.carrierSprite, 1)
+            self.gameGrid[row2][col2+1] = (self.carrierSprite, 2)
+            self.gameGrid[row2][col2+2] = (self.carrierSprite, 3)
+            self.gameGrid[row2][col2+3] = (self.carrierSprite, 4)
 
     def clicked(self, e):
         print("clicked at", e.x, e.y)

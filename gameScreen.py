@@ -22,7 +22,7 @@ class Game(Frame):
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
-        self.userCanvas.bind("<ButtonRelease-1>",self.battleshipDropped)
+        self.userCanvas.bind("<ButtonRelease-1>",self.shipDropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)
         self.userCanvas.bind("<B1-Motion>", self.shipMoved)
         self.userCanvas.bind("<Button-1>", self.onShipClick)
@@ -41,6 +41,13 @@ class Game(Frame):
         for i in range(1,402,50):
             self.userCanvas.create_line(i+1+250,0,i+1+250,400,fill="gray")
             self.userCanvas.create_line(250,i+1,650,i+1,fill="gray")
+
+    def shipDropped(self, e):
+        if self.battleshipClicked:
+            self.battleshipDropped(e)
+        else:
+            self.carrierDropped(e)
+        
 
     def battleshipDropped(self,e):
         if self.battleshipClicked:
@@ -79,10 +86,15 @@ class Game(Frame):
 
         if self.gameGrid[row2][col2] is not None and self.carrierClicked:
             self.userCanvas.coords(self.carrierSprite, 800, 100)
+        if col2 < 0 or col2 > 400:
+            self.userCanvas.coords(self.carrierSprite, 800, 100)
             return
 
-        print("dropped at: ", row2, col2)
+    
+
+        print("carrier dropped at: ", row2, col2)
         if self.carrierClicked:
+            print(self.userCanvas.coords(self.carrierSprite))
             self.userCanvas.coords(self.carrierSprite, snappedCol2, snappedRow2)
             self.gameGrid[row2][col2] = (self.carrierSprite, 1)
             self.gameGrid[row2][col2+1] = (self.carrierSprite, 2)
@@ -103,7 +115,6 @@ class Game(Frame):
         battleshipBbox = self.userCanvas.bbox(self.battleshipSprite)
         click_x, click_y = e.x, e.y
         
-
         # checks if a click happens within that boundary box
         if battleshipBbox[0] < click_x < battleshipBbox[2] and battleshipBbox[1] < click_y < battleshipBbox[3]:
             print(f"Mouse clicked on the battleship!")
@@ -117,6 +128,7 @@ class Game(Frame):
 
         carrierBbox = self.userCanvas.bbox(self.carrierSprite)
         click_x2, click_y2 = e.x, e.y
+        
         # checks if a click happens within that boundary box
         if carrierBbox[0] < click_x2 < carrierBbox[2] and carrierBbox[1] < click_y2 < carrierBbox[3]:
             print(f"Mouse clicked on the carrier!")

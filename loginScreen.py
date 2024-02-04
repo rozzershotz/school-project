@@ -16,7 +16,7 @@ mainfont = ("/home/pi/Documents/q13rtaylor-project/school-project/fonts/american
 class App(Tk):
     def __init__(self):
         Tk.__init__(self)
-        self.geometry("1920x1080")
+        self.geometry("1280x720")
         self.columnconfigure(0,weight=1)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")

@@ -22,9 +22,12 @@ class Game(Frame):
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
+        self.rotateButton = Button(self, text="Rotate Ships", command=self.rotateShips, font=self.buttonFont)
+        self.rotateButton.grid(row=4, column=0, pady=10, padx=600, sticky="w")
         self.userCanvas.bind("<ButtonRelease-1>",self.shipDropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)
         self.userCanvas.bind("<B1-Motion>", self.shipMoved)
+        self.rotateButton.bind("<Button-1>", self.rotateShips)
         self.userCanvas.bind("<Button-1>", self.onShipClick)
 
         self.title = Label(self, anchor="center", text="hello new game", bg="#0074b7", fg="white", font = self.titleFont)
@@ -75,31 +78,33 @@ class Game(Frame):
             self.gameGrid[row][col+2] = (self.battleshipSprite, 3)
             self.gameGrid[row][col+3] = (self.battleshipSprite, 4)
 
+            print(self.gameGrid)
+
     def carrierDropped(self, e):
         if self.carrierClicked:
             self.carrierCoords = self.userCanvas.coords(self.carrierSprite)
-        row2 = int((self.carrierCoords[1] - 250) // 50)
-        col2 = int((self.carrierCoords[0] - 250) // 50)
+        row = int((self.carrierCoords[1] - 250) // 50)
+        col = int((self.carrierCoords[0] - 250) // 50)
 
-        snappedCol2 = 250 + col2 * 50
-        snappedRow2 = 250 + row2 * 50
+        snappedCol2 = 250 + col * 50
+        snappedRow2 = 250 + row * 50
 
-        if self.gameGrid[row2][col2] is not None and self.carrierClicked:
+        if self.gameGrid[row][col] is not None and self.carrierClicked:
             self.userCanvas.coords(self.carrierSprite, 800, 100)
-        if col2 < 0 or col2 > 400:
+        if col < 0 or col > 400:
             self.userCanvas.coords(self.carrierSprite, 800, 100)
             return
 
-    
-
-        print("carrier dropped at: ", row2, col2)
+        print("carrier dropped at: ", row, col)
         if self.carrierClicked:
             print(self.userCanvas.coords(self.carrierSprite))
             self.userCanvas.coords(self.carrierSprite, snappedCol2, snappedRow2)
-            self.gameGrid[row2][col2] = (self.carrierSprite, 1)
-            self.gameGrid[row2][col2+1] = (self.carrierSprite, 2)
-            self.gameGrid[row2][col2+2] = (self.carrierSprite, 3)
-            self.gameGrid[row2][col2+3] = (self.carrierSprite, 4)
+            self.gameGrid[row][col] = (self.carrierSprite, 1)
+            self.gameGrid[row][col+1] = (self.carrierSprite, 2)
+            self.gameGrid[row][col+2] = (self.carrierSprite, 3)
+            self.gameGrid[row][col+3] = (self.carrierSprite, 4)
+
+            print(self.gameGrid)
 
     def clicked(self, e):
         print("clicked at", e.x, e.y)
@@ -150,3 +155,40 @@ class Game(Frame):
 
         if self.carrierClicked:
             self.userCanvas.coords(self.carrierSprite, e.x, e.y)
+
+    def rotateShips(self, e=None):
+        self.battleshipClicked = True
+        self.carrierClicked = True
+        if self.battleshipClicked:
+            self.rotateShip(self.battleshipSprite, self.e)
+        elif self.carrierClicked:
+            self.rotateShip(self.carrierSprite, self.e)
+
+    def rotateShip(self, shipSprite):
+        currentCoords = self.userCanvas.coords(shipSprite)
+
+        if len(currentCoords) < 4:
+            return
+
+        centerX = (currentCoords[0] + currentCoords[2]) / 2
+        centerY = (currentCoords[1] + currentCoords[3]) / 2
+
+        rotatedCoords = [centerX - (centerY - self.e.y), centerY + (centerX - self.e.x), centerX + (centerY - self.e.y), centerY - (centerX - self.e.x)]
+
+        # Update canvas coordinates
+        self.userCanvas.coords(shipSprite, *rotatedCoords)
+
+        # Update gameGrid array
+        row = int((rotatedCoords[1] - 250) // 50)
+        col = int((rotatedCoords[0] - 250) // 50)
+
+        if shipSprite == self.battleshipSprite:
+            self.gameGrid[row][col] = (shipSprite, 1)
+            self.gameGrid[row][col + 1] = (shipSprite, 2)
+            self.gameGrid[row][col + 2] = (shipSprite, 3)
+            self.gameGrid[row][col + 3] = (shipSprite, 4)
+        elif shipSprite == self.carrierSprite:
+            self.gameGrid[row][col] = (shipSprite, 1)
+            self.gameGrid[row + 1][col] = (shipSprite, 2)
+            self.gameGrid[row + 2][col] = (shipSprite, 3)
+            self.gameGrid[row + 3][col] = (shipSprite, 4)

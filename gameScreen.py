@@ -61,24 +61,24 @@ class Game(Frame):
         snappedCol = 250 + col * 50
         snappedRow = 250 + row * 50
 
-        # seeing if cell is already occupied
         if self.gameGrid[row][col] is not None and self.battleshipClicked:
             self.userCanvas.coords(self.battleshipSprite, 700, 100)
         if col < 0 or col > 400:
             self.userCanvas.coords(self.battleshipSprite, 700, 100)
             return
-        
+
         print("battleship dropped at: ", row, col)
         if self.battleshipClicked:
             print(self.userCanvas.coords(self.battleshipSprite))
-
             self.userCanvas.coords(self.battleshipSprite, snappedCol, snappedRow)
             self.gameGrid[row][col] = (self.battleshipSprite, 1)
-            self.gameGrid[row][col+1] = (self.battleshipSprite, 2)
-            self.gameGrid[row][col+2] = (self.battleshipSprite, 3)
-            self.gameGrid[row][col+3] = (self.battleshipSprite, 4)
+            self.gameGrid[row+1][col] = (self.battleshipSprite, 2)
+            self.gameGrid[row+2][col] = (self.battleshipSprite, 3)
+            self.gameGrid[row+3][col] = (self.battleshipSprite, 4)
 
             print(self.gameGrid)
+            print(str(snappedCol))
+            print(str(col))
 
     def carrierDropped(self, e):
         if self.carrierClicked:
@@ -100,11 +100,12 @@ class Game(Frame):
             print(self.userCanvas.coords(self.carrierSprite))
             self.userCanvas.coords(self.carrierSprite, snappedCol2, snappedRow2)
             self.gameGrid[row][col] = (self.carrierSprite, 1)
-            self.gameGrid[row][col+1] = (self.carrierSprite, 2)
-            self.gameGrid[row][col+2] = (self.carrierSprite, 3)
-            self.gameGrid[row][col+3] = (self.carrierSprite, 4)
+            self.gameGrid[row+1][col] = (self.carrierSprite, 2)
+            self.gameGrid[row+2][col] = (self.carrierSprite, 3)
+            self.gameGrid[row+3][col] = (self.carrierSprite, 4)
 
             print(self.gameGrid)
+            print(str(snappedCol2))
 
     def clicked(self, e):
         print("clicked at", e.x, e.y)
@@ -156,13 +157,12 @@ class Game(Frame):
         if self.carrierClicked:
             self.userCanvas.coords(self.carrierSprite, e.x, e.y)
 
-    def rotateShips(self, e=None):
-        self.battleshipClicked = True
-        self.carrierClicked = True
+    def rotateShips(self, e):
+        click_x, click_y = e.x, e.y
         if self.battleshipClicked:
-            self.rotateShip(self.battleshipSprite, self.e)
+            self.rotateShip(self.battleshipSprite)
         elif self.carrierClicked:
-            self.rotateShip(self.carrierSprite, self.e)
+            self.rotateShip(self.carrierSprite)
 
     def rotateShip(self, shipSprite):
         currentCoords = self.userCanvas.coords(shipSprite)

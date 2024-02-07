@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter.font as TkFont
 import time
+import random
 
 class Game(Frame):
     def __init__(self, parent):
@@ -13,6 +14,8 @@ class Game(Frame):
 
         self.battleshipSegments = 4
         self.carrierSegments = 4
+
+        self.shipHit = False
 
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
@@ -82,8 +85,7 @@ class Game(Frame):
             self.userGameGrid[row+3][col] = (self.battleshipSprite, 4)
 
             print(self.userGameGrid)
-            print(str(snappedCol))
-            print(str(col))
+            print(f"battleship snapped to: row - {str(snappedRow)} column - {str(snappedCol)}")
 
             self.opponentClicked()
 
@@ -220,16 +222,32 @@ class Game(Frame):
         self.userGameGrid[row][col] = None
         print(f"Hit {shipName}")
 
+        self.shipHit = True
+
+        if self.battleshipSegments == 0:
+            print("Battleship Destroyed!")
+
+        elif self.carrierSegments == 0:
+            print("Carrier destroyed!")
+
+        return self.shipHit
 
     def hitOpponentShipSegment(self, row, col):
         return
 
     def opponentClicked(self):
-        x_coord = 259
-        y_coord = 21
+        x_coord = random.randrange(0, 400, 50)
+        y_coord = random.randrange(0, 400, 50)
         print(f"opponent clicked at {x_coord}, {y_coord}")
         x_result = x_coord // 50
         y_result = y_coord // 50
+
+        if self.shipHit == True:
+            choice = [{x_coord} -50, {x_coord} + 50]
+            x_coord = random.choice(choice)
+
+            choice2 = [{y_coord} -50, {y_coord} + 50]
+            y_coord = random.choice(choice2)
         
         print(f"row index (from 0): {x_result}")
         print(f"column index (from 0): {y_result}")

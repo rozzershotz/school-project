@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter.font as TkFont
+import time
 
 class Game(Frame):
     def __init__(self, parent):
@@ -7,7 +8,11 @@ class Game(Frame):
         self.battleshipImage = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
         self.carrierImage = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
-        self.gameGrid = [[None for row in range(8)] for column in range(8)]
+        self.userGameGrid = [[None for row in range(8)] for column in range(8)]
+        self.opponentGameGrid = [[None for row in range(8)] for column in range(8)]
+
+        self.battleshipSegments = 4
+        self.carrierSegments = 4
 
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
@@ -61,7 +66,7 @@ class Game(Frame):
         snappedCol = 250 + col * 50
         snappedRow = 250 + row * 50
 
-        if self.gameGrid[row][col] is not None and self.battleshipClicked:
+        if self.userGameGrid[row][col] is not None and self.battleshipClicked:
             self.userCanvas.coords(self.battleshipSprite, 700, 100)
         if col < 0 or col > 400:
             self.userCanvas.coords(self.battleshipSprite, 700, 100)
@@ -71,14 +76,16 @@ class Game(Frame):
         if self.battleshipClicked:
             print(self.userCanvas.coords(self.battleshipSprite))
             self.userCanvas.coords(self.battleshipSprite, snappedCol, snappedRow)
-            self.gameGrid[row][col] = (self.battleshipSprite, 1)
-            self.gameGrid[row+1][col] = (self.battleshipSprite, 2)
-            self.gameGrid[row+2][col] = (self.battleshipSprite, 3)
-            self.gameGrid[row+3][col] = (self.battleshipSprite, 4)
+            self.userGameGrid[row][col] = (self.battleshipSprite, 1)
+            self.userGameGrid[row+1][col] = (self.battleshipSprite, 2)
+            self.userGameGrid[row+2][col] = (self.battleshipSprite, 3)
+            self.userGameGrid[row+3][col] = (self.battleshipSprite, 4)
 
-            print(self.gameGrid)
+            print(self.userGameGrid)
             print(str(snappedCol))
             print(str(col))
+
+            self.opponentClicked()
 
     def carrierDropped(self, e):
         if self.carrierClicked:
@@ -89,7 +96,7 @@ class Game(Frame):
         snappedCol2 = 250 + col * 50
         snappedRow2 = 250 + row * 50
 
-        if self.gameGrid[row][col] is not None and self.carrierClicked:
+        if self.userGameGrid[row][col] is not None and self.carrierClicked:
             self.userCanvas.coords(self.carrierSprite, 800, 100)
         if col < 0 or col > 400:
             self.userCanvas.coords(self.carrierSprite, 800, 100)
@@ -99,13 +106,15 @@ class Game(Frame):
         if self.carrierClicked:
             print(self.userCanvas.coords(self.carrierSprite))
             self.userCanvas.coords(self.carrierSprite, snappedCol2, snappedRow2)
-            self.gameGrid[row][col] = (self.carrierSprite, 1)
-            self.gameGrid[row+1][col] = (self.carrierSprite, 2)
-            self.gameGrid[row+2][col] = (self.carrierSprite, 3)
-            self.gameGrid[row+3][col] = (self.carrierSprite, 4)
+            self.userGameGrid[row][col] = (self.carrierSprite, 1)
+            self.userGameGrid[row+1][col] = (self.carrierSprite, 2)
+            self.userGameGrid[row+2][col] = (self.carrierSprite, 3)
+            self.userGameGrid[row+3][col] = (self.carrierSprite, 4)
 
-            print(self.gameGrid)
+            print(self.userGameGrid)
             print(str(snappedCol2))
+
+            self.opponentClicked()
 
     def clicked(self, e):
         print("clicked at", e.x, e.y)
@@ -114,6 +123,8 @@ class Game(Frame):
         
         print(f"row index (from 0): {x_result}")
         print(f"column index (from 0): {y_result}")
+
+        self.hitOpponentShipSegment(x_result, y_result)
         pass
 
     def onShipClick(self,e):
@@ -127,8 +138,8 @@ class Game(Frame):
             self.battleshipClicked = True
             for col in range(8):
                 for row in range(8):
-                    if self.gameGrid[col][row] is not None and self.gameGrid[col][row][0] == self.battleshipSprite:
-                        self.gameGrid[col][row] = None
+                    if self.userGameGrid[col][row] is not None and self.userGameGrid[col][row][0] == self.battleshipSprite:
+                        self.userGameGrid[col][row] = None
         else:
             self.battleshipClicked = False
 
@@ -141,8 +152,8 @@ class Game(Frame):
             self.carrierClicked = True
             for col in range(8):
                 for row in range(8):
-                    if self.gameGrid[col][row] is not None and self.gameGrid[col][row][0] == self.carrierSprite:
-                        self.gameGrid[col][row] = None
+                    if self.userGameGrid[col][row] is not None and self.userGameGrid[col][row][0] == self.carrierSprite:
+                        self.userGameGrid[col][row] = None
         else:
             self.carrierClicked = False
 
@@ -183,12 +194,44 @@ class Game(Frame):
         col = int((rotatedCoords[0] - 250) // 50)
 
         if shipSprite == self.battleshipSprite:
-            self.gameGrid[row][col] = (shipSprite, 1)
-            self.gameGrid[row][col + 1] = (shipSprite, 2)
-            self.gameGrid[row][col + 2] = (shipSprite, 3)
-            self.gameGrid[row][col + 3] = (shipSprite, 4)
+            self.userGameGrid[row][col] = (shipSprite, 1)
+            self.userGameGrid[row][col + 1] = (shipSprite, 2)
+            self.userGameGrid[row][col + 2] = (shipSprite, 3)
+            self.userGameGrid[row][col + 3] = (shipSprite, 4)
         elif shipSprite == self.carrierSprite:
-            self.gameGrid[row][col] = (shipSprite, 1)
-            self.gameGrid[row + 1][col] = (shipSprite, 2)
-            self.gameGrid[row + 2][col] = (shipSprite, 3)
-            self.gameGrid[row + 3][col] = (shipSprite, 4)
+            self.userGameGrid[row][col] = (shipSprite, 1)
+            self.userGameGrid[row + 1][col] = (shipSprite, 2)
+            self.userGameGrid[row + 2][col] = (shipSprite, 3)
+            self.userGameGrid[row + 3][col] = (shipSprite, 4)
+
+    def hitUserShipSegment(self, row, col):
+        shipName = ""
+
+        if self.userGameGrid[row][col] is None:
+            return
+        
+        if self.userGameGrid[row][col][0] == 1:
+            shipName = "Battleship"
+            self.battleshipSegments -=1
+        else:
+            shipName = "Carrier"
+            self.carrierSegments -=1
+
+        self.userGameGrid[row][col] = None
+        print(f"Hit {shipName}")
+
+
+    def hitOpponentShipSegment(self, row, col):
+        return
+
+    def opponentClicked(self):
+        x_coord = 259
+        y_coord = 21
+        print(f"opponent clicked at {x_coord}, {y_coord}")
+        x_result = x_coord // 50
+        y_result = y_coord // 50
+        
+        print(f"row index (from 0): {x_result}")
+        print(f"column index (from 0): {y_result}")
+
+        self.hitUserShipSegment(x_result, y_result)

@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.font as TkFont
 import time
 import random
+from playsound import playsound 
 
 class Game(Frame):
     def __init__(self, parent):
@@ -12,10 +13,16 @@ class Game(Frame):
         self.userGameGrid = [[None for row in range(8)] for column in range(8)]
         self.opponentGameGrid = [[None for row in range(8)] for column in range(8)]
 
-        self.battleshipSegments = 4
-        self.carrierSegments = 4
+        self.userBattleshipSegments = 4
+        self.userCarrierSegments = 4
 
-        self.shipHit = False
+        self.opponentBattleshipSegments = 4
+        self.opponentCarrierSegments = 4
+
+        self.userShipHit = False
+
+        self.userTurn = False
+        self.opponentTurn = False
 
         Frame.__init__(self)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
@@ -47,6 +54,8 @@ class Game(Frame):
         for i in range(1,402,50):
             self.opponentCanvas.create_line(i+1,0,i+1,400,fill="gray")
             self.opponentCanvas.create_line(0,i+1,400,i+1,fill="gray")
+
+        self.placeOpponentShips()
 
     def drawUserGrid(self):
         for i in range(1,402,50):
@@ -87,8 +96,6 @@ class Game(Frame):
             print(self.userGameGrid)
             print(f"battleship snapped to: row - {str(snappedRow)} column - {str(snappedCol)}")
 
-            self.opponentClicked()
-
     def carrierDropped(self, e):
         if self.carrierClicked:
             self.carrierCoords = self.userCanvas.coords(self.carrierSprite)
@@ -114,20 +121,10 @@ class Game(Frame):
             self.userGameGrid[row+3][col] = (self.carrierSprite, 4)
 
             print(self.userGameGrid)
+            print(self.opponentGameGrid)
             print(str(snappedCol2))
 
-            self.opponentClicked()
-
-    def clicked(self, e):
-        print("clicked at", e.x, e.y)
-        x_result = e.x // 50
-        y_result = e.y // 50
-        
-        print(f"row index (from 0): {x_result}")
-        print(f"column index (from 0): {y_result}")
-
-        self.hitOpponentShipSegment(x_result, y_result)
-        pass
+            self.turn(e)
 
     def onShipClick(self,e):
         # sets a boundary around the image to determine if clicked
@@ -206,50 +203,139 @@ class Game(Frame):
             self.userGameGrid[row + 2][col] = (shipSprite, 3)
             self.userGameGrid[row + 3][col] = (shipSprite, 4)
 
-    def hitUserShipSegment(self, row, col):
-        shipName = ""
+    def hitUserShipSegment(self, row, col, e):
+        if self.opponentTurn == True:
+            shipName = ""
 
-        if self.userGameGrid[row][col] is None:
-            return
-        
-        if self.userGameGrid[row][col][0] == 1:
-            shipName = "Battleship"
-            self.battleshipSegments -=1
-        else:
-            shipName = "Carrier"
-            self.carrierSegments -=1
+            if self.userGameGrid[row][col] is None:
+                print("Opponent shot missed")
+                playsound('cannon_miss.mp3')
+                self.userTurn = True
+                self.opponentTurn = False
+            
+            if self.userGameGrid[row][col][0] == 1:
+                shipName = "Battleship"
+                self.userBattleshipSegments -=1
+            else:
+                shipName = "Carrier"
+                self.userCarrierSegments -=1
 
-        self.userGameGrid[row][col] = None
-        print(f"Hit {shipName}")
+            self.userGameGrid[row][col] = None
+            print(f"Opponent hit the {shipName}")
 
-        self.shipHit = True
+            self.userShipHit = True
 
-        if self.battleshipSegments == 0:
-            print("Battleship Destroyed!")
+            if self.userBattleshipSegments == 0:
+                print("User Battleship Destroyed!")
 
-        elif self.carrierSegments == 0:
-            print("Carrier destroyed!")
+            elif self.userCarrierSegments == 0:
+                print("User Carrier destroyed!")
 
-        return self.shipHit
+            self.userTurn = True
+            self.opponentTurn = False
 
-    def hitOpponentShipSegment(self, row, col):
-        return
+    def hitOpponentShipSegment(self, row, col, e):
+        if self.userTurn == True:
+            shipName = ""
 
-    def opponentClicked(self):
-        x_coord = random.randrange(0, 400, 50)
-        y_coord = random.randrange(0, 400, 50)
-        print(f"opponent clicked at {x_coord}, {y_coord}")
-        x_result = x_coord // 50
-        y_result = y_coord // 50
+            if self.opponentGameGrid[row][col] is None:
+                print("User shot missed")
+                playsound('cannon_miss.mp3')
+                
+                self.opponentTurn = True
+                self.userTurn = False
+                self.opponentClicked(e)
+            
+            if self.opponentGameGrid[row][col] == "battleship":
+                shipName = "Battleship"
+                self.opponentBattleshipSegments -=1
+            else:
+                shipName = "Carrier"
+                self.opponentCarrierSegments -=1
 
-        if self.shipHit == True:
-            choice = [{x_coord} -50, {x_coord} + 50]
-            x_coord = random.choice(choice)
+            self.opponentGameGrid[row][col] = None
+            print(f"User hit the {shipName}")
 
-            choice2 = [{y_coord} -50, {y_coord} + 50]
-            y_coord = random.choice(choice2)
+            if self.opponentBattleshipSegments == 0:
+                print("Opponent Battleship Destroyed!")
+
+            elif self.userCarrierSegments == 0:
+                print("Opponent Carrier destroyed!")
+
+            self.opponentTurn = True
+            self.userTurn = False
+            self.opponentClicked(e)
+
+
+    def opponentClicked(self, e):
+            time.sleep(3)
+            x_coord = random.randrange(0, 400, 50)
+            y_coord = random.randrange(0, 400, 50)
+            print(f"opponent clicked at {x_coord}, {y_coord}")
+            x_result = x_coord // 50
+            y_result = y_coord // 50
+
+            if self.userShipHit == True:
+                x_choice_1 = x_coord - 50
+                x_choice_2 = x_coord + 50
+
+                y_choice_1 = y_coord - 50
+                y_choice_2 = y_coord + 50
+
+                choice = [x_choice_1, x_choice_2]
+                x_coord = random.choice(choice)
+
+                choice2 = [y_choice_1, y_choice_2]
+                y_coord = random.choice(choice2)
+
+                x_result = x_coord // 50
+                y_result = y_coord // 50
+            
+            print(f"row index (from 0): {x_result}")
+            print(f"column index (from 0): {y_result}")
+
+            self.hitUserShipSegment(x_result, y_result, e)
+
+    def clicked(self, e):
+        print("clicked at", e.x, e.y)
+        x_result = e.x // 50
+        y_result = e.y // 50
         
         print(f"row index (from 0): {x_result}")
         print(f"column index (from 0): {y_result}")
 
-        self.hitUserShipSegment(x_result, y_result)
+        self.hitOpponentShipSegment(x_result, y_result, e)
+        pass
+
+    def placeOpponentShips(self):
+    # Place Battleship randomly
+        battleship_row = random.randint(0, 7)
+        battleship_col = random.randint(0, 3)
+        for i in range(4):
+            self.opponentGameGrid[battleship_row][battleship_col + i] = "battleship"
+
+        # Place Carrier randomly
+        carrier_row = random.randint(0, 3)
+        carrier_col = random.randint(0, 7)
+        for i in range(4):
+            self.opponentGameGrid[carrier_row + i][carrier_col] = "carrier"
+
+    def turn(self, e):
+        for col in range(8):
+                for row in range(8):
+                    if 1 or 2 == self.userGameGrid[row][col][0]:
+                        time.sleep(3)
+                        answer = input("Ready to play? - Y/N: ")
+                        if answer == "Y":
+                            print("Opponent's turn")
+                            self.opponentTurn = True
+                            self.opponentClicked(e)
+
+
+
+    # DEVELOPMENT PRIORITIES
+        # get random placing of ships on opponent grid (DONE)
+        # add a turn system
+        # add animations to screen for diff things (splashes and explosions)
+        # add a counter to the side of the grids, how many ships left each
+        # add an end game screen (win/lose kinda thing)

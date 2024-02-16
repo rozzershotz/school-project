@@ -10,6 +10,8 @@ class Game(Frame):
         self.battleshipImage = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
         self.carrierImage = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
+        self.splashImage = PhotoImage(file="splash.png")
+
         self.userGameGrid = [[None for row in range(8)] for column in range(8)]
         self.opponentGameGrid = [[None for row in range(8)] for column in range(8)]
 
@@ -209,6 +211,7 @@ class Game(Frame):
 
             if self.userGameGrid[row][col] is None:
                 print("Opponent shot missed")
+                self.userCanvas.create_image(row, col, image = self.splashImage)
                 playsound('cannon_miss.mp3')
                 self.userTurn = True
                 self.opponentTurn = False
@@ -240,6 +243,7 @@ class Game(Frame):
 
             if self.opponentGameGrid[row][col] is None:
                 print("User shot missed")
+                self.opponentCanvas.create_image(row, col, image = self.splashImage)
                 playsound('cannon_miss.mp3')
                 
                 self.opponentTurn = True

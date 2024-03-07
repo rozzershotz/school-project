@@ -2,7 +2,8 @@ from tkinter import *
 import tkinter.font as TkFont
 import time
 import random
-from playsound import playsound 
+from playsound import playsound
+import pickle
 
 class Game(Frame):
     def __init__(self, parent):
@@ -359,10 +360,28 @@ class Game(Frame):
         self.opponentTurn = True
         self.opponentClicked()
 
+    def saveGame(self):
+        file1 = open("userSaveFile.pickle", "wb")
+        file2 = open("opponentSaveFile.pickle", "wb")
+        pickle.dump(self.userGameGrid, file1)
+        pickle.dump(self.opponentGameGrid, file2)
+        file1.close()
+        file2.close()
+
+    def loadGame(self):
+        file1 = open("userSaveFile.pickle", "r")
+        file2 = open("opponentSaveFile.pickle", "r")
+        self.userGameGrid = pickle.load(file1)
+        self.opponentGameGrid = pickle.load(file2)
+        file1.close()
+        file2.close()
+
+        
     # DEVELOPMENT PRIORITIES
+        # save state for an in progress game
         # add an end game when all ships are destroyed
         # add a counter to the side of the grids, how many ships left each
 
     # TO FIX
         # opponents ships on it's grid can overlap
-        # opponent's clicks are off when hitting the ships
+        # opponent's clicks are off when hitting the ships 

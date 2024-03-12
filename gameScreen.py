@@ -225,20 +225,20 @@ class Game(Frame):
             self.userGameGrid[row + 2][col] = (shipSprite, 3)
             self.userGameGrid[row + 3][col] = (shipSprite, 4)
 
-    def hitUserShipSegment(self, row, col):
+    def hitUserShipSegment(self, row, col, x_coord, y_coord):
         if self.opponentTurn == True:
             shipName = ""
 
             if self.userGameGrid[row][col] is None:
                 print("Opponent shot missed")
-                self.userCanvas.create_image((col*50)+250, (row*50), image = self.splashImage, anchor="nw")
+                self.userCanvas.create_image((x_coord)+250, (y_coord), image = self.splashImage, anchor="nw")
                 self.update()
-                playsound('cannon_miss.mp3')
+                #playsound('cannon_miss.mp3')
             
             if self.userGameGrid[row][col] is not None and self.userGameGrid[row][col][0] == 1:
                 shipName = "Battleship"
                 self.userBattleshipSegments -=1
-                self.userCanvas.create_image((col*50)+250, (row*50), image = self.explosionImage, anchor="nw")
+                self.userCanvas.create_image((x_coord)+250, (y_coord), image = self.explosionImage, anchor="nw")
                 self.update()
                 print(f"Opponent hit the {shipName}")
                 self.userShipHit = True
@@ -247,7 +247,7 @@ class Game(Frame):
             if self.userGameGrid[row][col] is not None and self.userGameGrid[row][col][0] == 2:
                 shipName = "Carrier"
                 self.userCarrierSegments -=1
-                self.userCanvas.create_image((col*50)+250, (row*50), image = self.explosionImage, anchor="nw")
+                self.userCanvas.create_image((x_coord)+250, (y_coord), image = self.explosionImage, anchor="nw")
                 self.update()
                 print(f"Opponent hit the {shipName}")
                 self.userShipHit = True
@@ -274,7 +274,7 @@ class Game(Frame):
                 print("")
                 self.opponentCanvas.create_image((row*50), (col*50), image = self.splashImage, anchor="nw")
                 self.update()
-                playsound('cannon_miss.mp3')
+                #playsound('cannon_miss.mp3')
             
             if self.opponentGameGrid[row][col] == "battleship":
                 shipName = "Battleship"
@@ -337,7 +337,7 @@ class Game(Frame):
             print(f"row index (from 0): {x_result}")
             print(f"column index (from 0): {y_result}")
 
-            self.hitUserShipSegment(x_result, y_result)
+            self.hitUserShipSegment(x_result, y_result, x_coord, y_coord)
 
     def clicked(self, e):
         print("clicked at", e.x, e.y)

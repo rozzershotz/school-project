@@ -46,6 +46,10 @@ class Game(Frame):
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
         self.startGameButton = Button(self, text="Play Game", font=self.playGameButtonFont, command = self.startGameButtonClicked)
+        self.saveGameButton = Button(self, text="Save Game", font=self.buttonFont, command=self.saveGame)
+        self.saveGameButton.grid(row=2, column=0, sticky="e")
+        self.loadGameButton = Button(self, text="Load Game", font=self.buttonFont, command=self.loadGame)
+        self.loadGameButton.grid(row=3, column=0, sticky="e")
         self.rotateButton = Button(self, text="Rotate Ships", font=self.buttonFont, command=self.rotateShips)
         self.rotateButton.grid(row=4, column=0, pady=10, padx=600, sticky="w")
         self.userCanvas.bind("<ButtonRelease-1>",self.shipDropped)
@@ -91,6 +95,8 @@ class Game(Frame):
         row = int((self.battleshipCoords[1] - 250) // 50)
         col = int((self.battleshipCoords[0] - 250) // 50)
 
+        global snappedCol
+        global snappedRow
         snappedCol = 250 + col * 50
         snappedRow = 250 + row * 50
 
@@ -118,6 +124,8 @@ class Game(Frame):
         row = int((self.carrierCoords[1] - 250) // 50)
         col = int((self.carrierCoords[0] - 250) // 50)
 
+        global snappedCol2
+        global snappedRow2
         snappedCol2 = 250 + col * 50
         snappedRow2 = 250 + row * 50
 
@@ -363,18 +371,53 @@ class Game(Frame):
     def saveGame(self):
         file1 = open("userSaveFile.pickle", "wb")
         file2 = open("opponentSaveFile.pickle", "wb")
+        file3 = open("battleshipRow.pickle", "wb")
+        file4 = open("battleshipCol.pickle", "wb")
+        file5 = open("carrierRow.pickle", "wb")
+        file6 = open("carrierCol.pickle", "wb")
+
         pickle.dump(self.userGameGrid, file1)
         pickle.dump(self.opponentGameGrid, file2)
+        pickle.dump(snappedRow, file3)
+        pickle.dump(snappedCol, file4)
+        pickle.dump(snappedRow2, file5)
+        pickle.dump(snappedCol2, file6)
+
         file1.close()
         file2.close()
+        file3.close()
+        file4.close()
+        file5.close()
+        file6.close()
+
+        print("Saved Game Successfully")
 
     def loadGame(self):
         file1 = open("userSaveFile.pickle", "r")
         file2 = open("opponentSaveFile.pickle", "r")
+        file3 = open("battleshipRow.pickle", "r")
+        file4 = open("battleshipCol.pickle", "r")
+        file5 = open("carrierRow.pickle", "r")
+        file6 = open("carrierCol.pickle", "r")
+
         self.userGameGrid = pickle.load(file1)
         self.opponentGameGrid = pickle.load(file2)
+
+        battleshipOldRow = pickle.load(file3)
+        battleshipOldCol = pickle.load(file4)
+        self.userCanvas.coords(self.battleshipSprite, battleshipOldCol, battleshipOldRow)
+
+        carrierOldRow = pickle.load(file5)
+        carrierOldCol = pickle.load(file6)
+        self.userCanvas.coords(self.carrierSprite, carrierOldCol, carrierOldRow)
+
         file1.close()
         file2.close()
+        file3.close()
+        file4.close()
+        file5.close()
+        file6.close()
+        print("Loaded Game Successfully")
 
         
     # DEVELOPMENT PRIORITIES

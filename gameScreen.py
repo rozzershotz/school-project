@@ -23,8 +23,8 @@ class Game(Frame):
         self.userBattleshipSegments = 4
         self.userCarrierSegments = 4
 
-        self.opponentBattleshipSegments = 4
-        self.opponentCarrierSegments = 4
+        self.opponentBattleshipSegments = 0
+        self.opponentCarrierSegments = 0
 
         self.userShipHit = False
 
@@ -32,6 +32,7 @@ class Game(Frame):
         self.opponentTurn = False
 
         Frame.__init__(self)
+
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
         self.playGameButtonFont = TkFont.Font(family="Arial", size=25, weight="bold")
@@ -58,10 +59,18 @@ class Game(Frame):
         self.rotateButton.bind("<Button-1>", self.rotateShips)
         self.userCanvas.bind("<Button-1>", self.onShipClick)
 
-        self.title = Label(self, anchor="center", text="hello new game", bg="#0074b7", fg="white", font = self.titleFont)
+        self.title = Label(self, anchor="center", text="Battleships", bg="#0074b7", fg="white", font = self.titleFont)
         self.title.grid(row=0, column=0, sticky="NSEW", columnspan=2)
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,minsize=100)
+
+        self.endGameFrame = Frame(self, width=1920, height=1080)
+        self.title = Label(self.endGameFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.titleFont)
+        self.title.grid(row=0, column=0, sticky="NSEW", columnspan=1)
+        self.endGameFrame.columnconfigure(0,weight=1)
+        self.endGameFrame.rowconfigure(0,minsize=100)
+
+        self.endGameFrame.rowconfigure(1,minsize=1)
 
     def drawOpponentGrid(self):
         for i in range(1,402,50):
@@ -85,6 +94,10 @@ class Game(Frame):
 
         if self.battleshipDropBool and self.carrierDropBool == True:
             self.startGameButton.grid(row=4, column=0, sticky="e")
+
+        if self.opponentCarrierSegments == 0 and self.opponentBattleshipSegments == 0:
+                Frame.grid_forget(self)
+                self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
     def startGameButtonClicked(self):
         self.turn()
@@ -298,9 +311,15 @@ class Game(Frame):
                 print("")
                 print(self.opponentGameGrid)
 
-            if self.userCarrierSegments == 0:
+            if self.opponentCarrierSegments == 0:
+                print("")
                 print("Opponent Carrier destroyed!")
+                print("")
                 print(self.opponentGameGrid)
+
+            if self.opponentCarrierSegments == 0 and self.opponentBattleshipSegments == 0:
+                Frame.grid_forget()
+                self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
             self.opponentTurn = True
             self.userTurn = False
@@ -308,7 +327,6 @@ class Game(Frame):
             print("Opponent's turn")
             print("")
             self.opponentClicked()
-
 
     def opponentClicked(self):
             time.sleep(3)
@@ -421,12 +439,10 @@ class Game(Frame):
         file6.close()
         print("Loaded Game Successfully")
 
-        
     # DEVELOPMENT PRIORITIES
-        # save state for an in progress game
         # add an end game when all ships are destroyed
         # add a counter to the side of the grids, how many ships left each
 
     # TO FIX
         # opponents ships on it's grid can overlap
-        # opponent's clicks are off when hitting the ships 
+        # opponent's clicks are off when hitting the ships

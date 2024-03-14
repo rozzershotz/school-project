@@ -8,6 +8,37 @@ import pickle
 class Game(Frame):
     def __init__(self, parent):
         
+        
+        # creating user won screen
+        self.wonEndFrame = Frame(width=1920, height=1080)
+        self.endGameFont = TkFont.Font(family="Arial", size=30, weight="bold")
+        self.endTitle = Label(self.wonEndFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.endGameFont)
+        self.endGameFont = TkFont.Font(family="Arial", size=30, weight="bold")
+        self.endTitle.grid(row=0, column=0, sticky="NSEW", columnspan=1)
+        self.spacing = Label(self.wonEndFrame, text="", height="30", width="50")
+        self.spacing.grid(row=1, column=0, columnspan=2)
+        self.wonTitle = Label(self.wonEndFrame, anchor="center", text="You won!", bg="green", fg="white", font=self.endGameFont)
+        self.wonTitle.grid(row=3, column=0, sticky="NSEW", columnspan=1)
+        self.wonEndFrame.columnconfigure(0,weight=1)
+        self.wonEndFrame.rowconfigure(0,minsize=100)
+
+        self.wonEndFrame.rowconfigure(1,minsize=1)
+
+        # creating user lost screen
+        self.lostEndFrame = Frame(width=1920, height=1080)
+        self.endTitle2 = Label(self.lostEndFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.endGameFont)
+        self.endTitle2.grid(row=0, column=0, sticky="NSEW", columnspan=1)
+        self.spacing2 = Label(self.lostEndFrame, text="", height="30", width="50")
+        self.spacing2.grid(row=1, column=0, columnspan=2)
+        self.lostTitle = Label(self.lostEndFrame, anchor="center", text="You lost :(", bg="red", fg="white", font=self.endGameFont)
+        self.lostTitle.grid(row=3, column=0, sticky="NSEW", columnspan=1)
+        self.lostEndFrame.columnconfigure(0,weight=1)
+        self.lostEndFrame.rowconfigure(0,minsize=100)
+
+        self.lostEndFrame.rowconfigure(1,minsize=1)
+
+        
+
         self.battleshipImage = PhotoImage(file="ship-set/Battleship/ShipBattleshipHull.png")
         self.carrierImage = PhotoImage(file="ship-set/Carrier/ShipCarrierHull.png")
 
@@ -25,9 +56,6 @@ class Game(Frame):
 
         self.opponentBattleshipSegments = 0
         self.opponentCarrierSegments = 0
-
-        self.userWon = False
-        self.opponentWon = False
 
         self.userShipHit = False
 
@@ -67,25 +95,6 @@ class Game(Frame):
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,minsize=100)
 
-        def endGameScreen():
-        # creating end game screen
-            self.endGameFont = TkFont.Font(family="Arial", size=30, weight="bold")
-            self.endGameFrame = Frame( width=1920, height=1080)
-            self.endTitle = Label(self.endGameFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.endGameFont)
-            self.endTitle.grid(row=0, column=0, sticky="NSEW", columnspan=1)
-            self.endGameFrame.columnconfigure(0,weight=1)
-            self.endGameFrame.rowconfigure(0,minsize=100)
-
-            self.endGameFrame.rowconfigure(1,minsize=1)
-
-            if self.userWon == True:
-                self.wonTitle = Label(self.endGameFrame, anchor="center", text="You won!", bg="#0074b7", fg="white", font=self.endGameFont)
-                self.wonTitle.grid(row=3, column=0, sticky="NSEW", columspan=1)
-
-            elif self.opponentWon == True:
-                self.wonTitle = Label(self.endGameFrame, anchor="center", text="You lost :(", bg="#0074b7", fg="white", font=self.endGameFont)
-                self.wonTitle.grid(row=3, column=0, sticky="NSEW", columspan=1)
-
     def drawOpponentGrid(self):
         for i in range(1,402,50):
             self.opponentCanvas.create_line(i+1,0,i+1,400,fill="gray")
@@ -108,11 +117,6 @@ class Game(Frame):
 
         if self.battleshipDropBool and self.carrierDropBool == True:
             self.startGameButton.grid(row=4, column=0, sticky="e")
-
-        if self.opponentCarrierSegments == 0 and self.opponentBattleshipSegments == 0:
-                Frame.grid_forget(self)
-                self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
-                self.userWon = True
 
     def startGameButtonClicked(self):
         self.turn()
@@ -289,8 +293,7 @@ class Game(Frame):
 
             if self.userCarrierSegments == 0 and self.userBattleshipSegments == 0:
                 Frame.grid_forget(self)
-                self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
-                self.opponentWon = True
+                self.lostEndFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
             self.userTurn = True
             self.opponentTurn = False
@@ -339,8 +342,7 @@ class Game(Frame):
 
             if self.opponentCarrierSegments == 0 and self.opponentBattleshipSegments == 0:
                 Frame.grid_forget(self)
-                self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
-                self.userWon = True
+                self.wonEndFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
             self.opponentTurn = True
             self.userTurn = False

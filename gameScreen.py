@@ -26,6 +26,9 @@ class Game(Frame):
         self.opponentBattleshipSegments = 0
         self.opponentCarrierSegments = 0
 
+        self.userWon = False
+        self.opponentWon = False
+
         self.userShipHit = False
 
         self.userTurn = False
@@ -64,13 +67,24 @@ class Game(Frame):
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,minsize=100)
 
-        self.endGameFrame = Frame(self, width=1920, height=1080)
-        self.title = Label(self.endGameFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.titleFont)
-        self.title.grid(row=0, column=0, sticky="NSEW", columnspan=1)
-        self.endGameFrame.columnconfigure(0,weight=1)
-        self.endGameFrame.rowconfigure(0,minsize=100)
+        def endGameScreen():
+        # creating end game screen
+            self.endGameFont = TkFont.Font(family="Arial", size=30, weight="bold")
+            self.endGameFrame = Frame( width=1920, height=1080)
+            self.endTitle = Label(self.endGameFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.endGameFont)
+            self.endTitle.grid(row=0, column=0, sticky="NSEW", columnspan=1)
+            self.endGameFrame.columnconfigure(0,weight=1)
+            self.endGameFrame.rowconfigure(0,minsize=100)
 
-        self.endGameFrame.rowconfigure(1,minsize=1)
+            self.endGameFrame.rowconfigure(1,minsize=1)
+
+            if self.userWon == True:
+                self.wonTitle = Label(self.endGameFrame, anchor="center", text="You won!", bg="#0074b7", fg="white", font=self.endGameFont)
+                self.wonTitle.grid(row=3, column=0, sticky="NSEW", columspan=1)
+
+            elif self.opponentWon == True:
+                self.wonTitle = Label(self.endGameFrame, anchor="center", text="You lost :(", bg="#0074b7", fg="white", font=self.endGameFont)
+                self.wonTitle.grid(row=3, column=0, sticky="NSEW", columspan=1)
 
     def drawOpponentGrid(self):
         for i in range(1,402,50):
@@ -98,6 +112,7 @@ class Game(Frame):
         if self.opponentCarrierSegments == 0 and self.opponentBattleshipSegments == 0:
                 Frame.grid_forget(self)
                 self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
+                self.userWon = True
 
     def startGameButtonClicked(self):
         self.turn()
@@ -272,6 +287,11 @@ class Game(Frame):
             elif self.userCarrierSegments == 0:
                 print("User Carrier destroyed!")
 
+            if self.userCarrierSegments == 0 and self.userBattleshipSegments == 0:
+                Frame.grid_forget(self)
+                self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
+                self.opponentWon = True
+
             self.userTurn = True
             self.opponentTurn = False
             print("")
@@ -318,8 +338,9 @@ class Game(Frame):
                 print(self.opponentGameGrid)
 
             if self.opponentCarrierSegments == 0 and self.opponentBattleshipSegments == 0:
-                Frame.grid_forget()
+                Frame.grid_forget(self)
                 self.endGameFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
+                self.userWon = True
 
             self.opponentTurn = True
             self.userTurn = False

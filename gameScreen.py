@@ -45,6 +45,7 @@ class Game(Frame):
         self.splashImage = PhotoImage(file="splash.png")
         self.explosionImage = PhotoImage(file="explosion.png")
 
+        # array initialisation
         self.userGameGrid = [[None for row in range(8)] for column in range(8)]
         self.opponentGameGrid = [[None for row in range(8)] for column in range(8)]
 
@@ -54,8 +55,8 @@ class Game(Frame):
         self.userBattleshipSegments = 4
         self.userCarrierSegments = 4
 
-        self.opponentBattleshipSegments = 0
-        self.opponentCarrierSegments = 0
+        self.opponentBattleshipSegments = 4
+        self.opponentCarrierSegments = 4
 
         self.userShipHit = False
 
@@ -77,12 +78,14 @@ class Game(Frame):
         self.rowconfigure(1, minsize=30)
         self.rowconfigure(3, minsize=50)
         self.drawUserGrid()
+        # buttons creation and placing
         self.startGameButton = Button(self, text="Play Game", font=self.playGameButtonFont, command = self.startGameButtonClicked)
         self.saveGameButton = Button(self, text="Save Game", font=self.buttonFont, command=self.saveGame)
         self.saveGameButton.grid(row=2, column=0, sticky="e")
         self.loadGameButton = Button(self, text="Load Game", font=self.buttonFont, command=self.loadGame)
         self.loadGameButton.grid(row=3, column=0, sticky="e")
         self.rotateButton = Button(self, text="Rotate Ships", font=self.buttonFont, command=self.rotateShips)
+        # binding different abilitties to functions
         self.rotateButton.grid(row=4, column=0, pady=10, padx=600, sticky="w")
         self.userCanvas.bind("<ButtonRelease-1>",self.shipDropped)
         self.opponentCanvas.bind("<Button-1>",self.clicked)

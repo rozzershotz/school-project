@@ -12,11 +12,13 @@ class Game(Frame):
         # creating user won screen
         self.wonEndFrame = Frame(width=1920, height=1080)
         self.endGameFont = TkFont.Font(family="Arial", size=30, weight="bold")
+        # top title
         self.endTitle = Label(self.wonEndFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.endGameFont)
         self.endGameFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.endTitle.grid(row=0, column=0, sticky="NSEW", columnspan=1)
         self.spacing = Label(self.wonEndFrame, text="", height="30", width="50")
         self.spacing.grid(row=1, column=0, columnspan=2)
+        # specific title
         self.wonTitle = Label(self.wonEndFrame, anchor="center", text="You won!", bg="green", fg="white", font=self.endGameFont)
         self.wonTitle.grid(row=3, column=0, sticky="NSEW", columnspan=1)
         self.wonEndFrame.columnconfigure(0,weight=1)
@@ -26,10 +28,12 @@ class Game(Frame):
 
         # creating user lost screen
         self.lostEndFrame = Frame(width=1920, height=1080)
+        # top title
         self.endTitle2 = Label(self.lostEndFrame, anchor="center", text="End Game", bg="#0074b7", fg="white", font=self.endGameFont)
         self.endTitle2.grid(row=0, column=0, sticky="NSEW", columnspan=1)
         self.spacing2 = Label(self.lostEndFrame, text="", height="30", width="50")
         self.spacing2.grid(row=1, column=0, columnspan=2)
+        # specific title
         self.lostTitle = Label(self.lostEndFrame, anchor="center", text="You lost :(", bg="red", fg="white", font=self.endGameFont)
         self.lostTitle.grid(row=3, column=0, sticky="NSEW", columnspan=1)
         self.lostEndFrame.columnconfigure(0,weight=1)
@@ -120,6 +124,7 @@ class Game(Frame):
 
         if self.battleshipDropBool and self.carrierDropBool == True:
             self.startGameButton.grid(row=4, column=0, sticky="e")
+
 
     def startGameButtonClicked(self):
         self.turn()

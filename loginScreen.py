@@ -1,16 +1,19 @@
 from tkinter import *
 import tkinter.font as TkFont
 from gameScreen import Game
-import sqlite3 as sql
+import sqlite3
+from tkinter import messagebox as ms
+
 mainfont = ("/home/pi/Documents/q13rtaylor-project/school-project/fonts/american_captain/American Captain.ttf")
 
-#def makeDatabase(db):
-#    c = db.cursor()
-#    c.execute("DROP TABLE IF EXISTS username")
-#    c.execute("DROP TABLE IF EXISTS password")
-#    c.execute("CREATE TABLE password")
-#    c.execute("CREATE TABLE username (userID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)")
-#    db.commit()
+# creates database (if not created already)
+with sqlite3.connect('userdatabase.db') as db:
+    c = db.cursor()
+
+c.execute('CREATE TABLE IF NOT EXISTS user (username TEXT NOT NULL PRIMARY KEY,password TEXT NOT NULL);')
+db.commit()
+db.close()
+
 
 # initiated Class, created parameters for screens
 class App(Tk):
@@ -20,6 +23,63 @@ class App(Tk):
         self.columnconfigure(0,weight=1)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
+
+        # database global variables
+        self.username = StringVar()
+        self.password = StringVar()
+        self.n_username = StringVar()
+        self.n_password = StringVar()
+        self.head = None
+
+        # Sets up the database
+        self.db2 = None
+        # Holds database information
+        self.db = None
+        self.db_connection()
+
+    # Open Database connection
+    def db_connection(self):
+        with sqlite3.connect('userdatabase.db') as self.db2:
+            self.db = self.db2.cursor()
+
+    # Close Database connection
+    def db_close_connection(self):
+        self.db.close()
+
+    def login(self):
+        # Establish Connection
+        # Moved to db_connection()
+        # Find user, if there is any take proper action
+        find_user = 'SELECT * FROM user WHERE username = ? and password = ?'
+        self.db.execute(find_user, [(self.username.get()), (self.password.get())])
+        result = self.db.fetchall()
+        if result:
+            ms.showinfo("Success!", f"{self.username.get()} Logged In Successfully")
+            self.loginFrame.grid_forget()
+            self.mainMenuFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
+
+        else:
+            ms.showerror('Oops!', 'Username Not Found.')
+
+    def new_user(self):
+        # Establish Connection
+        # Moved to db_connection()
+
+        # Find Existing username, if any take proper action
+        find_user = 'SELECT username FROM user WHERE username = ?'
+        self.db.execute(find_user, [(self.n_username.get())])
+        if self.db.fetchall():
+            ms.showerror('Error!', 'Username Taken Try a Different One.')
+        else:
+            ms.showinfo('Success!', 'Account Created!')
+        # Create New Account
+        insert = 'INSERT INTO user(username,password) VALUES(?,?)'
+        self.db.execute(insert, [(self.n_username.get()), (self.n_password.get())])
+        self.db2.commit()
+        
+    def delete_user(self):
+        find_user = 'DELETE * FROM user WHERE username = ? and password = ?'
+        self.db.execute(find_user, [(self.username.get()), (self.password.get())])
 
     def run(self):
         # first screen
@@ -63,8 +123,15 @@ class App(Tk):
 
         self.loginFrame.rowconfigure(1,minsize=1)
 
-        self.addExitButton(self.loginFrame)
         self.addBackButton(self.loginFrame)
+        Label(self.loginFrame, text='Username: ', font=('', 20)).grid(sticky=W, padx=600)
+        Entry(self.loginFrame, textvariable=self.username, bd=2, font=self.buttonFont).grid(row=2, column=0, columnspan=2)
+        Label(self.loginFrame, text='Password: ', font=('', 20)).grid(sticky=W, padx=600)
+        Entry(self.loginFrame, textvariable=self.password, bd=2, font=self.buttonFont, show='*').grid(row=3, column=0, columnspan=2)
+
+        Button(self.loginFrame, text=' Login ', bd=3, font=self.buttonFont, padx=5, pady=5, command=self.login).grid(columnspan=2)
+
+        self.addExitButton(self.loginFrame)
 
         self.registerFrame = Frame(self, width=1920, height=1080)
         self.registerTitle = Label(self.registerFrame, anchor="center", text="Register", bg="#116530", fg="white", font=self.titleFont)
@@ -75,6 +142,14 @@ class App(Tk):
         self.registerFrame.rowconfigure(1,minsize=1)
 
         self.addExitButton(self.registerFrame)
+        Label(self.registerFrame, text='Username: ', font=('', 20)).grid(row=2, sticky=W, padx=600)
+        Entry(self.registerFrame, textvariable=self.n_username, bd=2, font=self.buttonFont).grid(row=3, column=0, columnspan=2)
+        Label(self.registerFrame, text='Password: ', font=('', 20)).grid(sticky=W, padx=600)
+        Entry(self.registerFrame, textvariable=self.n_password, bd=2, font=self.buttonFont, show='*').grid(row=4, column=0, columnspan=2)
+
+        Button(self.registerFrame, text='Create Account', bd=3, font=self.buttonFont, padx=5, pady=5, command=self.new_user).grid(columnspan=2)
+        Button(self.registerFrame, text='Go to Login', bd=3, font=self.buttonFont, padx=5, pady=5, command=self.loginSwitch).grid(columnspan=2)
+
         self.addBackButton(self.registerFrame)
 
         self.mainMenuFrame = Frame(self, width=1920, height=1080)
@@ -102,19 +177,7 @@ class App(Tk):
         self.addExitButton(self.mainMenuFrame)
         self.addBackButton(self.mainMenuFrame)
 
-        #self.db = sql.connect("userdatabase.db")
-        #makeDatabase(self.db)
-
-        #self.testDB()
-
         self.mainloop()
-
-    #def testDB(self):
-    #    # this just accesses the database and print out what it finds in the pupils table
-    #    c = self.db.cursor()
-    #    results = c.execute("SELECT * FROM username")
-    #    for line in results.fetchall():
-    #        print(line)
 
     # added interactive hover on buttons
     def changeOnHover(self, Button, colorOnHover, colorOnLeave):
@@ -123,17 +186,18 @@ class App(Tk):
 
     def addBackButton(self, frameRef):
         backButton = Button(frameRef, text="Back", height="2", width="10", background = "white", activebackground="gray", activeforeground="white", command=self.BackSwitch)
-        backButton.grid(row=1, column=0, columnspan=2)
-        self.changeOnHover(backButton, "ADD8E6", "white")
+        backButton.grid(row=1, column=0, columnspan=2, pady=10)
+        self.changeOnHover(backButton, "#ADD8E6", "white")
 
     def addExitButton(self, frameRef):
         exitButton = Button(frameRef, text="Quit", height="2", width="10", background = "white", activebackground="gray", activeforeground="white", command=self.destroy)
         exitButton.grid(row=0, column=1)
-        self.changeOnHover(exitButton, "ADD8E6", "white")
+        self.changeOnHover(exitButton, "#ADD8E6", "white")
 
     # creating way to switch between screens
     def loginSwitch(self):
         self.firstFrame.grid_forget()
+        self.registerFrame.grid_forget()
         self.loginFrame.grid(row=0, column=0,rowspan=3, columnspan=2, sticky="NSEW")
 
     def RegisterSwitch(self):

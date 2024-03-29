@@ -29,6 +29,7 @@ class App(Tk):
         self.password = StringVar()
         self.n_username = StringVar()
         self.n_password = StringVar()
+        self.username_delete = StringVar()
         self.head = None
 
         # Sets up the database
@@ -68,18 +69,32 @@ class App(Tk):
         # Find Existing username, if any take proper action
         find_user = 'SELECT username FROM user WHERE username = ?'
         self.db.execute(find_user, [(self.n_username.get())])
+
         if self.db.fetchall():
             ms.showerror('Error!', 'Username Taken Try a Different One.')
+
         else:
             ms.showinfo('Success!', 'Account Created!')
+
         # Create New Account
         insert = 'INSERT INTO user(username,password) VALUES(?,?)'
         self.db.execute(insert, [(self.n_username.get()), (self.n_password.get())])
         self.db2.commit()
         
     def delete_user(self):
-        find_user = 'DELETE * FROM user WHERE username = ? and password = ?'
-        self.db.execute(find_user, [(self.username.get()), (self.password.get())])
+        # Check if the username exists
+        find_user = 'SELECT username FROM user WHERE username = ?'
+        self.db.execute(find_user, [(self.username_delete.get())])
+
+        if not self.db.fetchall():
+            ms.showerror('Error!', 'User not found.')
+
+        else:
+            # Delete the user
+            delete_query = 'DELETE FROM user WHERE username = ?'
+            self.db.execute(delete_query, [(self.username_delete.get())])
+            self.db2.commit()
+            ms.showinfo('Success!', 'User deleted successfully.')
 
     def run(self):
         # first screen
@@ -130,6 +145,10 @@ class App(Tk):
         Entry(self.loginFrame, textvariable=self.password, bd=2, font=self.buttonFont, show='*').grid(row=3, column=0, columnspan=2)
 
         Button(self.loginFrame, text=' Login ', bd=3, font=self.buttonFont, padx=5, pady=5, command=self.login).grid(columnspan=2)
+
+        Label(self.loginFrame, text='Delete User: ', font=('', 20)).grid(sticky=W, padx=600)
+        Entry(self.loginFrame, textvariable=self.username_delete, bd=2, font=self.buttonFont).grid(row=5, column=0, columnspan=2)
+        Button(self.loginFrame, text=' Delete ', bd=3, font=self.buttonFont, padx=5, pady=5, command=self.delete_user).grid(columnspan=2)
 
         self.addExitButton(self.loginFrame)
 

@@ -7,7 +7,8 @@ import pickle
 
 class Game(Frame):
     def __init__(self, parent):
-        
+
+        self.userSoundChoice = True
         
         # creating user won screen
         self.wonEndFrame = Frame(width=1920, height=1080)
@@ -101,6 +102,9 @@ class Game(Frame):
         self.title.grid(row=0, column=0, sticky="NSEW", columnspan=2)
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,minsize=100)
+
+    def setUserSoundChoice(self, userSoundChoice):
+        self.userSoundChoice = userSoundChoice
 
     def drawOpponentGrid(self):
         for i in range(1,402,50):
@@ -273,7 +277,7 @@ class Game(Frame):
                 print("Opponent shot missed")
                 self.userCanvas.create_image((x_coord)+250, (y_coord), image = self.splashImage, anchor="nw")
                 self.update()
-                #playsound('cannon_miss.mp3')
+                playsound('cannon_miss.mp3')
             
             if self.userGameGrid[row][col] is not None and self.userGameGrid[row][col][0] == 1:
                 shipName = "Battleship"
@@ -318,7 +322,7 @@ class Game(Frame):
                 print("")
                 self.opponentCanvas.create_image((row*50), (col*50), image = self.splashImage, anchor="nw")
                 self.update()
-                #playsound('cannon_miss.mp3')
+                playsound('cannon_miss.mp3')
             
             if self.opponentGameGrid[row][col] == "battleship":
                 shipName = "Battleship"

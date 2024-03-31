@@ -14,7 +14,6 @@ c.execute('CREATE TABLE IF NOT EXISTS user (username TEXT NOT NULL PRIMARY KEY,p
 db.commit()
 db.close()
 
-
 # initiated Class, created parameters for screens
 class App(Tk):
     def __init__(self):
@@ -23,6 +22,8 @@ class App(Tk):
         self.columnconfigure(0,weight=1)
         self.titleFont = TkFont.Font(family="Arial", size=30, weight="bold")
         self.buttonFont = TkFont.Font(family="Arial", size=15, weight="bold")
+
+        self.userSoundChoice = True
 
         # database global variables
         self.username = StringVar()
@@ -179,6 +180,20 @@ class App(Tk):
         spacing2 = Label(self.mainMenuFrame, text="", height="10", width="50")
         spacing2.grid(row=2, column=0, columnspan=2)
 
+        self.settingsFrame = Frame(self, width=1920, height=1080)
+        self.settingsTitle = Label(self.settingsFrame, anchor="center", text="Settings", bg="#915F6D", fg="white", font=self.titleFont)
+        self.settingsTitle.grid(row=0, column=0, sticky="NSEW", columnspan=2)
+        self.settingsFrame.columnconfigure(0,weight=1)
+        self.settingsFrame.rowconfigure(0,minsize=100)
+        self.settingsFrame.rowconfigure(1,minsize=1)
+
+        self.soundToggle = Button(self.settingsFrame, text="On", width=12, relief="raised", bg="#116530", bd=3, font=self.buttonFont, padx=5, pady=5, command=self.toggle)
+        Label(self.settingsFrame, text='Sound: ', font=('', 20)).grid(row=3, sticky=W, padx=600)
+        self.soundToggle.grid(row=3, column=0, columnspan=2, pady=10)
+
+        self.addMainMenuBack(self.settingsFrame)
+        self.addExitButton(self.settingsFrame)
+
         playButton = Button(self.mainMenuFrame, text="Play", height="5", width="50", background = "white", activebackground="#055c9d", activeforeground="white", command = self.launchGame)
         playButton.grid(row=3,column=0, columnspan=2)
         self.changeOnHover(playButton, "#0074b7", "white")
@@ -187,7 +202,7 @@ class App(Tk):
         achievementButton.grid(row=4,column=0, columnspan=2)
         self.changeOnHover(achievementButton, "#0074b7", "white")
 
-        settingsButton = Button(self.mainMenuFrame, text="Settings", height="5", width="50", background = "white", activebackground="#055c9d", activeforeground="white")
+        settingsButton = Button(self.mainMenuFrame, text="Settings", height="5", width="50", background = "white", activebackground="#055c9d", activeforeground="white", command=self.settingsSwitch)
         settingsButton.grid(row=5,column=0, columnspan=2)
         self.changeOnHover(settingsButton, "#0074b7", "white")
 
@@ -213,6 +228,20 @@ class App(Tk):
         exitButton.grid(row=0, column=1)
         self.changeOnHover(exitButton, "#ADD8E6", "white")
 
+    def addMainMenuBack(self, frameRef):
+        backButton = Button(frameRef, text="Back", height="2", width="10", background = "white", activebackground="gray", activeforeground="white", command=self.mainMenuBackSwitch)
+        backButton.grid(row=1, column=0, columnspan=2, pady=10)
+        self.changeOnHover(backButton, "#ADD8E6", "white")
+
+    def toggle(self):
+        if self.soundToggle.config('relief')[-1] == 'sunken':
+            self.soundToggle.config(relief="raised", bg="red", text="Off", fg="white")
+            self.userSoundChoice = False
+        else:
+            self.soundToggle.config(relief="sunken")
+            self.soundToggle.config(bg="#116530", text="On", fg="white")
+            self.userSoundChoice = True
+
     # creating way to switch between screens
     def loginSwitch(self):
         self.firstFrame.grid_forget()
@@ -229,13 +258,22 @@ class App(Tk):
         self.mainMenuFrame.grid_forget()
         self.firstFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
+    def mainMenuBackSwitch(self):
+        self.settingsFrame.grid_forget()
+        self.mainMenuFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
+
     def mainMenuSwitch(self):
         self.firstFrame.grid_forget()
         self.mainMenuFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
     def launchGame(self):
         self.mainMenuFrame.grid_forget()
+        self.gamescreen.setUserSoundChoice(self.userSoundChoice)
         self.gamescreen.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
+
+    def settingsSwitch(self):
+        self.mainMenuFrame.grid_forget()
+        self.settingsFrame.grid(row=0, column=0, rowspan=3, columnspan=2, sticky="NSEW")
 
 
 app = App()

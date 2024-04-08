@@ -54,6 +54,8 @@ class Game(Frame):
         self.userGameGrid = [[None for row in range(8)] for column in range(8)]
         self.opponentGameGrid = [[None for row in range(8)] for column in range(8)]
 
+        # global variables used
+
         self.battleshipDropBool = False
         self.carrierDropBool = False
 
@@ -445,6 +447,7 @@ class Game(Frame):
 
         print("Saved Game Successfully")
 
+    # loads saved state of a game, opens files with pickle and puts them onto the screen
     def loadGame(self):
         file1 = open("userSaveFile.pickle", "rb")
         file2 = open("opponentSaveFile.pickle", "rb")
@@ -475,8 +478,6 @@ class Game(Frame):
         print("Loaded Game Successfully")
 
     # DEVELOPMENT PRIORITIES
-        # add an end game when all ships are destroyed
-        # add a counter to the side of the grids, how many ships left each
 
     # TO FIX
         # opponents ships on it's grid can overlap

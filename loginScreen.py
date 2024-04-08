@@ -74,13 +74,17 @@ class App(Tk):
         if self.db.fetchall():
             ms.showerror('Error!', 'Username Taken Try a Different One.')
 
+        elif self.n_username or self.n_password == "":
+            ms.showerror('Error!', 'Invalid Input')
+
         else:
             ms.showinfo('Success!', 'Account Created!')
 
-        # Create New Account
-        insert = 'INSERT INTO user(username,password) VALUES(?,?)'
-        self.db.execute(insert, [(self.n_username.get()), (self.n_password.get())])
-        self.db2.commit()
+            # Create New Account
+            insert = 'INSERT INTO user(username,password) VALUES(?,?)'
+
+            self.db.execute(insert, [(self.n_username.get()), (self.n_password.get())])
+            self.db2.commit()
         
     def delete_user(self):
         # Check if the username exists
@@ -218,11 +222,13 @@ class App(Tk):
         Button.bind("<Enter>", func=lambda e: Button.config(background=colorOnHover))
         Button.bind("<Leave>", func=lambda e: Button.config(background=colorOnLeave))
 
+    # back button, takes screen reference and positions at row 1
     def addBackButton(self, frameRef):
         backButton = Button(frameRef, text="Back", height="2", width="10", background = "white", activebackground="gray", activeforeground="white", command=self.BackSwitch)
         backButton.grid(row=1, column=0, columnspan=2, pady=10)
         self.changeOnHover(backButton, "#ADD8E6", "white")
 
+    # exit button, takes screen reference and positions at row 1
     def addExitButton(self, frameRef):
         exitButton = Button(frameRef, text="Quit", height="2", width="10", background = "white", activebackground="gray", activeforeground="white", command=self.destroy)
         exitButton.grid(row=0, column=1)
